@@ -1,5 +1,7 @@
 import streamlit as st
 from datetime import date
+import pandas as pd
+from io import BytesIO
 
 # --- Título ---
 st.set_page_config(page_title="Checklist Área de Planificación", page_icon="✅")
@@ -57,4 +59,28 @@ elif completadas > 0:
 else:
     st.warning("🙌 Aún no comienzas, ¡manos a la obra!")
 
+# --- Botón para guardar en Excel ---
+if st.button("✅ Completado"):
+    # Crear DataFrame combinando info general y checklist
+    df = pd.DataFrame({
+        "Fecha": [fecha_checklist]*len(tareas),
+        "Encargado": [encargado]*len(tareas),
+        "Tienda": [tienda]*len(tareas),
+        "Tarea": tareas,
+        "Completada": estado
+    })
 
+    # Guardar a Excel en memoria
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False, sheet_name="Checklist")
+        writer.save()
+        processed_data = output.getvalue()
+
+    # Botón para descargar
+    st.download_button(
+        label="📥 Descargar checklist",
+        data=processed_data,
+        file_name="Checklist_Completo.xlsx",
+        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
