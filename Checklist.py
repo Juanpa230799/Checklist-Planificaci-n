@@ -72,7 +72,7 @@ if st.button("✅ Completado"):
 
     # Guardar a Excel en memoria
     output = BytesIO()
-    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
         df.to_excel(writer, index=False, sheet_name="Checklist")
         writer.save()
         processed_data = output.getvalue()
@@ -84,3 +84,4 @@ if st.button("✅ Completado"):
         file_name="Checklist_Completo.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
+
